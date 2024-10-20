@@ -1,0 +1,34 @@
+version: '3'
+services:
+  hazelcast-node1:
+    image: hazelcast/hazelcast
+    container_name: hazelcast-node1
+    networks:
+      - hazelcast-network
+    environment:
+      - HZ_CLUSTER_NAME=my-cluster
+    ports:
+      - "5701:5701"
+
+  hazelcast-node2:
+    image: hazelcast/hazelcast
+    container_name: hazelcast-node2
+    networks:
+      - hazelcast-network
+    environment:
+      - HZ_CLUSTER_NAME=my-cluster
+
+  hazelcast-mancenter:
+    image: hazelcast/management-center
+    container_name: hazelcast-mancenter
+    ports:
+      - "8080:8080"
+    networks:
+      - hazelcast-network
+    environment:
+      - MC_INIT_CLUSTER=HZ_CLUSTER_NAME=my-cluster,tcp-ip
+      - MC_INIT_MEMBER=hazelcast-node1:5701,hazelcast-node2:5701
+
+networks:
+  hazelcast-network:
+    driver: bridge

@@ -1,0 +1,34 @@
+@startuml
+
+participant User
+participant  SpringBootApplication
+participant LocalCache
+participant ExternalSystem
+
+autonumber
+
+activate User
+User -> SpringBootApplication: Endpoint request
+activate SpringBootApplication
+alt if response in cache
+    SpringBootApplication -> LocalCache: Check for response in cache
+    activate LocalCache
+    LocalCache -> SpringBootApplication: Response from cache
+    deactivate LocalCache
+    SpringBootApplication -> User: Return response from cache
+else go to external system
+    SpringBootApplication -> ExternalSystem: Get response from external system
+    activate ExternalSystem
+    ExternalSystem -> SpringBootApplication: Response from external system
+    deactivate ExternalSystem
+    SpringBootApplication -> LocalCache: Add response data to cache
+    activate LocalCache
+    LocalCache -> SpringBootApplication: Data added to cache
+    deactivate LocalCache
+    SpringBootApplication -> User: Return Response
+    deactivate SpringBootApplication
+    deactivate User
+end
+
+
+@enduml
